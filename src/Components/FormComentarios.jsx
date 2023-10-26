@@ -1,15 +1,20 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import "../css/FormularioContacto.css";
 
 function FormComentarios(props) {
 
-    const [comentario , setComentario] = useState(false)
+  // let imgAvatar = localStorage.getItem("Avatar-User") || "";
+  const nameUser = localStorage.getItem("Name-User") || "";
+  const emailUser = localStorage.getItem("Email-User") || "";
+
+  const [comentario, setComentario] = useState(false);
 
   const onSubmit = (data) => {
-    if(localStorage.getItem("Name-User")){
-        setComentario(true)
-    }else{
-        alert("Pleace login")
+    if (localStorage.getItem("Name-User")) {
+      setComentario(true);
+    } else {
+      alert("Pleace login");
     }
   };
 
@@ -25,12 +30,15 @@ function FormComentarios(props) {
       className="FormContact"
       onSubmit={handleSubmit(onSubmit)}
     >
+          <h3>Deja un mensaje...</h3>
+
       <div className="Colx2">
         <div className="Col-1">
           <input
             placeholder="Nombre"
             {...register("Nombre", {
               required: "Nombre requerido",
+              value: nameUser,
               pattern: {
                 value: /^[a-z\s]+$/i,
                 message: "El nombre sólo puede contener letras",
@@ -47,6 +55,7 @@ function FormComentarios(props) {
             placeholder="Correo Electronico"
             {...register("Email", {
               required: "El correo es requerido",
+              value: emailUser,
               pattern: {
                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
                 message: "correo electrónico no válido",
@@ -77,9 +86,7 @@ function FormComentarios(props) {
         <input type="submit" />
       </div>
 
-      {comentario &&(
-        <h1>Comentario enviado para revicion!</h1>
-      )}
+      {comentario && <b>Comentario enviado para revicion!</b>}
     </form>
   );
 }
