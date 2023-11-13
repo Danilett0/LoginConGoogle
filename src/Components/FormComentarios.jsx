@@ -1,20 +1,40 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import emailjs from "emailjs-com";
 import "../css/FormularioContacto.css";
 
-function FormComentarios(props) {
-
-  // let imgAvatar = localStorage.getItem("Avatar-User") || "";
-  const nameUser = localStorage.getItem("Name-User") || "";
-  const emailUser = localStorage.getItem("Email-User") || "";
-
+function FormComentarios() {
   const [comentario, setComentario] = useState(false);
+  const [aviso, setAviso] = useState(false);
 
-  const onSubmit = (data) => {
-    if (localStorage.getItem("Name-User")) {
+  let UserName =
+    JSON.parse(localStorage.getItem("DataUser"))
+      .name.split(" ")[0]
+      .toLowerCase() || "";
+
+  const onSubmit = (data, e) => {
+    if (localStorage.getItem("DataUser")) {
+      setAviso(false);
       setComentario(true);
+
+      emailjs
+        .send(
+          process.env.REACT_APP_SERVICE_ID,
+          process.env.REACT_APP_TEMPLATE_ID,
+          data,
+          process.env.REACT_APP_PUBLI_KEY
+        )
+        .then(
+          (result) => {
+            console.log(result.text);
+          },
+          (error) => {
+            console.log(error.text);
+          }
+        );
+      e.target.reset();
     } else {
-      alert("Pleace login");
+      setAviso(true);
     }
   };
 
@@ -30,63 +50,39 @@ function FormComentarios(props) {
       className="FormContact"
       onSubmit={handleSubmit(onSubmit)}
     >
+      {!comentario && (
+        <>
           <h3>Deja un mensaje...</h3>
 
-      <div className="Colx2">
-        <div className="Col-1">
-          <input
-            placeholder="Nombre"
-            {...register("Nombre", {
-              required: "Nombre requerido",
-              value: nameUser,
-              pattern: {
-                value: /^[a-z\s]+$/i,
-                message: "El nombre sólo puede contener letras",
-              },
-            })}
-          />
-          {errors.Nombre && <span>{errors.Nombre.message}</span>}
-        </div>
-      </div>
+          <div className="Colx1">
+            <textarea
+              placeholder="Mensaje"
+              name="mensaje"
+              cols="5"
+              rows="5"
+              {...register("Mensaje", {
+                required: "No olvides incluir un mensaje",
+                minLength: {
+                  message: "El mensaje debe tener al menos 30 caracteres",
+                },
+              })}
+            />
+            {errors.Mensaje && <span>{errors.Mensaje.message}</span>}
+          </div>
 
-      <div className="Colx2">
-        <div className="Col-1">
-          <input
-            placeholder="Correo Electronico"
-            {...register("Email", {
-              required: "El correo es requerido",
-              value: emailUser,
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                message: "correo electrónico no válido",
-              },
-            })}
-          />
-          {errors.Email && <span>{errors.Email.message}</span>}
-        </div>
-      </div>
+          <div className="Colx1">
+            <input className="Button" type="submit" />
+          </div>
+        </>
+      )}
 
-      <div className="Colx1">
-        <textarea
-          placeholder="Mensaje"
-          name="mensaje"
-          cols="5"
-          rows="5"
-          {...register("Mensaje", {
-            required: "No olvides incluir un mensaje",
-            minLength: {
-              message: "El mensaje debe tener al menos 30 caracteres",
-            },
-          })}
-        />
-        {errors.Mensaje && <span>{errors.Mensaje.message}</span>}
-      </div>
-
-      <div className="Colx1">
-        <input type="submit" />
-      </div>
-
-      {comentario && <b>Comentario enviado para revicion!</b>}
+      {comentario && (
+        <b>
+          Gracias por dejar tu comentario {UserName}, este será enviado para
+          revision!
+        </b>
+      )}
+      {aviso && <b>Para enviar un comentario, debes iniciar secion primero!</b>}
     </form>
   );
 }

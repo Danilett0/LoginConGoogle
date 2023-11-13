@@ -1,24 +1,25 @@
-*{
+* {
   padding: 0px;
   margin: 0px;
   box-sizing: border-box;
 }
 
-body{
-  background-color: #9B6832;
+body {
+  background-color: rgb(4, 33, 49);
   height: 100%;
 }
 
 .App-header {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
 }
 
 .FormComents {
-  margin: 10px;
-  width:100%;
-  max-width: 400px;
+  margin: auto;
+  width: 100%;
+  max-width: 1200px;
+  padding: 10px;
 }
 
 @media (max-width: 830px) {
